@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ViewChild } from '@angular/core';
 import { SatPopover } from '@ncstate/sat-popover';
 
 @Component({
@@ -20,12 +20,7 @@ import { SatPopover } from '@ncstate/sat-popover';
 
         <br />
 
-        <button
-          mat-button
-          *ngIf="showAnchor"
-          [satPopoverAnchor]="getActivePopover()"
-          (click)="getActivePopover().toggle()"
-        >
+        <button mat-button *ngIf="showAnchor" [satPopoverAnchor]="getActivePopover()" (click)="togglePopover()">
           Anchor
         </button>
 
@@ -35,14 +30,25 @@ import { SatPopover } from '@ncstate/sat-popover';
     </mat-card>
   `
 })
-export class AnchorReuseComponent {
+export class AnchorReuseComponent implements AfterContentInit {
   @ViewChild('a') aPopover: SatPopover;
   @ViewChild('b') bPopover: SatPopover;
 
-  activePopover = 'a';
-  showAnchor = true;
+  activePopover = '';
+  showAnchor = false;
+
+  ngAfterContentInit() {
+    this.activePopover = 'a';
+  }
 
   getActivePopover(): SatPopover {
-    return this.activePopover === 'a' ? this.aPopover : this.bPopover;
+    if (this.activePopover === 'a') return this.aPopover;
+    if (this.activePopover === 'b') return this.bPopover;
+    return null;
+  }
+
+  togglePopover(): void {
+    const p = this.getActivePopover();
+    if (p) p.toggle();
   }
 }

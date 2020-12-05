@@ -12,45 +12,7 @@ import { trigger, state, style, animate, transition, query } from '@angular/anim
     ]),
     trigger('preventInitialAnimation', [transition(':enter', [query(':enter', [], { optional: true })])])
   ],
-  template: `
-    <!-- Fab -->
-    <button
-      mat-fab
-      satPopoverAnchor
-      #dialAnchor="satPopoverAnchor"
-      color="primary"
-      [@preventInitialAnimation]
-      (click)="dialPopover.toggle()"
-    >
-      <mat-icon [@spinInOut]="'in'" *ngIf="dialPopover.isOpen()">close</mat-icon>
-      <mat-icon [@spinInOut]="'in'" *ngIf="!dialPopover.isOpen()">edit</mat-icon>
-    </button>
-
-    <!-- Actions -->
-    <sat-popover #dialPopover [anchor]="dialAnchor" verticalAlign="above">
-      <div class="dial">
-        <ng-container *ngFor="let a of actions">
-          <button
-            mat-mini-fab
-            satPopoverAnchor
-            #tooltipAnchor="satPopoverAnchor"
-            color="accent"
-            (mouseenter)="tooltip.open()"
-            (mouseleave)="tooltip.close()"
-            (click)="dialPopover.close()"
-          >
-            <mat-icon>{{ a.icon }}</mat-icon>
-          </button>
-
-          <sat-popover #tooltip [anchor]="tooltipAnchor" horizontalAlign="before">
-            <div class="tooltip mat-body-1">
-              {{ a.name }}
-            </div>
-          </sat-popover>
-        </ng-container>
-      </div>
-    </sat-popover>
-  `
+  templateUrl: 'speed-dial.component.html'
 })
 export class SpeedDialDemo {
   actions = [
