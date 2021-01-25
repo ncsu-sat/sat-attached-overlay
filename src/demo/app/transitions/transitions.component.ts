@@ -3,54 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'demo-transitions',
   styleUrls: ['./transitions.component.scss'],
-  template: `
-    <mat-card>
-      <mat-card-title>Custom Transitions</mat-card-title>
-      <mat-card-content>
-        <div class="controls">
-          <mat-form-field>
-            <input matInput type="text" [(ngModel)]="openTransition" />
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput type="text" [(ngModel)]="closeTransition" />
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput type="number" [(ngModel)]="startAtScale" />
-            <mat-hint>Initial scale value for open animation.</mat-hint>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput type="number" [(ngModel)]="endAtScale" />
-            <mat-hint>End scale value for close animation.</mat-hint>
-          </mat-form-field>
-        </div>
-
-        <div class="indicators">
-          <div class="indicator" *ngFor="let indicator of callbackIndicators" [class.active]="indicator.active">
-            {{ indicator.name }}
-          </div>
-        </div>
-
-        <div satPopoverAnchor #popoverAnchor="satPopoverAnchor" class="anchor" (click)="p.toggle()"></div>
-
-        <sat-popover
-          #p
-          xAlign="after"
-          yAlign="below"
-          [anchor]="popoverAnchor"
-          [openTransition]="openTransition"
-          [closeTransition]="closeTransition"
-          [openAnimationStartAtScale]="startAtScale"
-          [closeAnimationEndAtScale]="endAtScale"
-          (opened)="showCallback('opened')"
-          (closed)="showCallback('closed')"
-          (afterOpen)="showCallback('afterOpen')"
-          (afterClose)="showCallback('afterClose')"
-        >
-          <div class="popover mat-subtitle">Hello!</div>
-        </sat-popover>
-      </mat-card-content>
-    </mat-card>
-  `
+  templateUrl: './transitions.component.html'
 })
 export class TransitionsDemo {
   openTransition = '2000ms ease';
