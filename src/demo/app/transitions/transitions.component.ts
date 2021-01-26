@@ -18,7 +18,7 @@ export class TransitionsDemo {
     { name: 'afterClose', active: false }
   ];
 
-  showCallback(name) {
+  showCallback(name: string) {
     const callback = this.callbackIndicators.find((i) => i.name === name);
 
     // Flash the callback indicator

@@ -4,6 +4,7 @@
     #focusTrapElement
     [ngClass]="_classList"
     [@transformPopover]="_getAnimation()"
+    (@transformPopover.start)="_onAnimationStart($event)"
     (@transformPopover.done)="_onAnimationDone($event)"
   >
     <ng-content></ng-content>

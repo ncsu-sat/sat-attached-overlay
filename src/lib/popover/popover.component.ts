@@ -19,7 +19,7 @@ import { DOCUMENT } from '@angular/common';
 import { FocusTrap, ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
 import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 
-import { transformPopover } from './popover.animations';
+import { popoverAnimations } from './popover.animations';
 import {
   getUnanchoredPopoverError,
   getInvalidHorizontalAlignError,
@@ -40,9 +40,7 @@ import {
 } from './types';
 import { SatPopoverAnchoringService } from './popover-anchoring.service';
 import { DEFAULT_TRANSITION } from './tokens';
-
-const DEFAULT_OPEN_ANIMATION_START_SCALE = 0.3;
-const DEFAULT_CLOSE_ANIMATION_END_SCALE = 0.5;
+import { DEFAULT_CLOSE_ANIMATION_END_SCALE, DEFAULT_OPEN_ANIMATION_START_SCALE } from './popover.constants';
 
 @Directive({
   selector: '[satPopoverAnchor]',
@@ -80,7 +78,7 @@ export class SatPopoverAnchor implements AfterViewInit {
 @Component({
   selector: 'sat-popover',
   encapsulation: ViewEncapsulation.None,
-  animations: [transformPopover],
+  animations: [popoverAnimations.transformPopover],
   styleUrls: ['./popover.component.scss'],
   templateUrl: './popover.component.html',
   providers: [SatPopoverAnchoringService]
@@ -387,9 +385,10 @@ export class SatPopover implements OnInit {
   }
 
   /** Gets an animation config with customized (or default) transition values. */
+  currState = 'initial';
   _getAnimation(): { value: any; params: any } {
-    return {
-      value: 'visible',
+    let opt = {
+      value: this.currState,
       params: {
         openTransition: this.openTransition,
         closeTransition: this.closeTransition,
@@ -397,15 +396,33 @@ export class SatPopover implements OnInit {
         endAtScale: this.closeAnimationEndAtScale
       }
     };
+
+    console.log(`** animations: ${this.currState};`, { opt });
+
+    return opt;
+  }
+
+  _onAnimationStart(event: AnimationEvent) {
+    console.log(`** animations start: ${event.toState} ${event.phaseName};`, { event });
+    this.currState = event.toState;
+    // this._animationStateChanged.emit(event);
   }
 
   /** Callback for when the popover is finished animating in or out. */
   _onAnimationDone(event: AnimationEvent) {
-    if (event.toState === 'visible') {
+    console.log(`** animations done: ${event.toState} ${event.phaseName};`, { event });
+
+    this.currState = event.toState;
+
+    if (event.toState === 'visible' || event.toState === 'initial') {
+      console.log('setting trap focus');
+
       this._trapFocus();
       this.afterOpen.emit();
     } else if (event.toState === 'void') {
       this._restoreFocusAndDestroyTrap();
+
+      console.log('_focusTrap:', this._focusTrap);
       this.afterClose.emit();
     }
   }
@@ -423,7 +440,11 @@ export class SatPopover implements OnInit {
 
   /** Move the focus inside the focus trap and remember where to return later. */
   private _trapFocus(): void {
+    console.log('this._previouslyFocusedElement:', this._previouslyFocusedElement);
+
     this._savePreviouslyFocusedElement();
+
+    console.log('this._previouslyFocusedElement:', this._previouslyFocusedElement);
 
     // There won't be a focus trap element if the close animation starts before open finishes
     if (!this._focusTrapElement) {
@@ -432,6 +453,7 @@ export class SatPopover implements OnInit {
 
     if (!this._focusTrap && this._focusTrapElement) {
       this._focusTrap = this._focusTrapFactory.create(this._focusTrapElement.nativeElement);
+      console.log('_focusTrap:', this._focusTrap);
     }
 
     if (this.autoFocus) {
@@ -443,14 +465,18 @@ export class SatPopover implements OnInit {
   private _restoreFocusAndDestroyTrap(): void {
     const toFocus = this._previouslyFocusedElement;
 
+    console.log('toFocus:', toFocus);
+
     // Must check active element is focusable for IE sake
     if (toFocus && 'focus' in toFocus && this.restoreFocus) {
+      console.log('restoring focus;', { toFocus, restoreFocus: this.restoreFocus });
       this._previouslyFocusedElement.focus();
     }
 
     this._previouslyFocusedElement = null;
 
     if (this._focusTrap) {
+      console.log('_focusTrap:', this._focusTrap);
       this._focusTrap.destroy();
       this._focusTrap = undefined;
     }

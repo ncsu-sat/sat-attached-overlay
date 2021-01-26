@@ -1,0 +1,4 @@
+export const DEFAULT_OPEN_TRANSITION = '500ms ease';
+export const DEFAULT_CLOSE_TRANSITION = '500ms ease';
+export const DEFAULT_OPEN_ANIMATION_START_SCALE = 0.3;
+export const DEFAULT_CLOSE_ANIMATION_END_SCALE = 0.5;
